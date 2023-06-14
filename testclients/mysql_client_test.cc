@@ -7254,12 +7254,12 @@ static void test_prepare_grant() {
   myquery(rc);
 
   strxmov(query, "CREATE USER 'test_grant'@",
-          opt_host ? opt_host : "'localhost'", NullS);
+          opt_host ? opt_host : "'127.0.0.1'", NullS);
   rc = mysql_query(mysql, query);
   myquery(rc);
 
   strxmov(query, "GRANT INSERT, UPDATE, SELECT ON ", current_db,
-          ".test_grant TO 'test_grant'@", opt_host ? opt_host : "'localhost'",
+          ".test_grant TO 'test_grant'@", opt_host ? opt_host : "'127.0.0.1'",
           NullS);
 
   if (mysql_query(mysql, query)) {
@@ -14793,7 +14793,7 @@ static void test_wl13905() {
   lmysql = mysql_client_init(nullptr);
   DIE_UNLESS(lmysql);
 
-  if (!mysql_real_connect_dns_srv(lmysql, "_mysql1._tcp.localhost", "root",
+  if (!mysql_real_connect_dns_srv(lmysql, "_mysql1._tcp.127.0.0.1", "root",
                                   "mypass", current_db, 0)) {
     fprintf(stdout, "Failed to connect with DNS to the database\n");
     fprintf(stdout,
@@ -16000,11 +16000,11 @@ static void test_change_user() {
   rc = mysql_query(l_mysql, buff);
   myquery2(l_mysql, rc);
 
-  sprintf(buff, "create user %s@'localhost' identified by '%s'", user_pw, pw);
+  sprintf(buff, "create user %s@'127.0.0.1' identified by '%s'", user_pw, pw);
   rc = mysql_query(l_mysql, buff);
   myquery2(l_mysql, rc);
 
-  sprintf(buff, "grant select on %s.* to %s@'localhost'", db, user_pw);
+  sprintf(buff, "grant select on %s.* to %s@'127.0.0.1'", db, user_pw);
   rc = mysql_query(l_mysql, buff);
   myquery2(l_mysql, rc);
 
@@ -16016,11 +16016,11 @@ static void test_change_user() {
   rc = mysql_query(l_mysql, buff);
   myquery2(l_mysql, rc);
 
-  sprintf(buff, "create user %s@'localhost'", user_no_pw);
+  sprintf(buff, "create user %s@'127.0.0.1'", user_no_pw);
   rc = mysql_query(l_mysql, buff);
   myquery2(l_mysql, rc);
 
-  sprintf(buff, "grant select on %s.* to %s@'localhost'", db, user_no_pw);
+  sprintf(buff, "grant select on %s.* to %s@'127.0.0.1'", db, user_no_pw);
   rc = mysql_query(l_mysql, buff);
   myquery2(l_mysql, rc);
 
@@ -16200,11 +16200,11 @@ static void test_change_user() {
   rc = mysql_query(mysql, buff);
   myquery(rc);
 
-  sprintf(buff, "drop user %s@'localhost'", user_pw);
+  sprintf(buff, "drop user %s@'127.0.0.1'", user_pw);
   rc = mysql_query(mysql, buff);
   myquery(rc);
 
-  sprintf(buff, "drop user %s@'localhost'", user_no_pw);
+  sprintf(buff, "drop user %s@'127.0.0.1'", user_no_pw);
   rc = mysql_query(mysql, buff);
   myquery(rc);
 }
@@ -16813,12 +16813,12 @@ static void test_bug31669() {
   myquery(rc);
 
   strxmov(query, "CREATE USER '", user,
-          "'@'localhost' IDENTIFIED WITH 'mysql_native_password' BY '", buff,
+          "'@'127.0.0.1' IDENTIFIED WITH 'mysql_native_password' BY '", buff,
           "'", NullS);
   rc = mysql_query(mysql, query);
   myquery(rc);
   strxmov(query, "GRANT ALL PRIVILEGES ON *.* TO '", user,
-          "'@'localhost' WITH GRANT OPTION", NullS);
+          "'@'127.0.0.1' WITH GRANT OPTION", NullS);
   rc = mysql_query(mysql, query);
   myquery(rc);
 
@@ -16860,7 +16860,7 @@ static void test_bug31669() {
   rc = mysql_query(mysql, query);
   myquery(rc);
 
-  strxmov(query, "DROP USER '", user, "'@'localhost'", NullS);
+  strxmov(query, "DROP USER '", user, "'@'127.0.0.1'", NullS);
   rc = mysql_query(mysql, query);
   myquery(rc);
   DIE_UNLESS(mysql_affected_rows(mysql) == 0);
@@ -17830,15 +17830,15 @@ static void test_bug53371() {
   myquery(rc);
   rc = mysql_query(mysql, "DROP DATABASE IF EXISTS bug53371");
   myquery(rc);
-  rc = mysql_query(mysql, "DROP USER 'testbug'@localhost");
-  rc = mysql_query(mysql, "CREATE USER 'testbug'@localhost");
+  rc = mysql_query(mysql, "DROP USER 'testbug'@127.0.0.1");
+  rc = mysql_query(mysql, "CREATE USER 'testbug'@127.0.0.1");
   myquery(rc);
 
   rc = mysql_query(mysql, "CREATE TABLE t1 (a INT)");
   myquery(rc);
   rc = mysql_query(mysql, "CREATE DATABASE bug53371");
   myquery(rc);
-  rc = mysql_query(mysql, "GRANT SELECT ON bug53371.* to 'testbug'@localhost");
+  rc = mysql_query(mysql, "GRANT SELECT ON bug53371.* to 'testbug'@127.0.0.1");
   myquery(rc);
 
   rc = mysql_change_user(mysql, "testbug", nullptr, "bug53371");
@@ -17860,7 +17860,7 @@ static void test_bug53371() {
   myquery(rc);
   rc = mysql_query(mysql, "DROP DATABASE bug53371");
   myquery(rc);
-  rc = mysql_query(mysql, "DROP USER 'testbug'@localhost");
+  rc = mysql_query(mysql, "DROP USER 'testbug'@127.0.0.1");
   myquery(rc);
 }
 
@@ -18512,21 +18512,21 @@ static void test_bug13001491() {
   myheader("test_bug13001491");
 
   snprintf(query, MAX_TEST_QUERY_LENGTH, "CREATE USER mysqltest_u1@%s",
-           opt_host ? opt_host : "'localhost'");
+           opt_host ? opt_host : "'127.0.0.1'");
 
   rc = mysql_query(mysql, query);
   myquery(rc);
 
   snprintf(query, MAX_TEST_QUERY_LENGTH,
            "GRANT ALL PRIVILEGES ON *.* TO mysqltest_u1@%s",
-           opt_host ? opt_host : "'localhost'");
+           opt_host ? opt_host : "'127.0.0.1'");
 
   rc = mysql_query(mysql, query);
   myquery(rc);
 
   snprintf(query, MAX_TEST_QUERY_LENGTH,
            "GRANT RELOAD ON *.* TO mysqltest_u1@%s",
-           opt_host ? opt_host : "'localhost'");
+           opt_host ? opt_host : "'127.0.0.1'");
 
   rc = mysql_query(mysql, query);
   myquery(rc);
@@ -18576,7 +18576,7 @@ static void test_bug13001491() {
   c = nullptr;
 
   snprintf(query, MAX_TEST_QUERY_LENGTH, "DROP USER mysqltest_u1@%s",
-           opt_host ? opt_host : "'localhost'");
+           opt_host ? opt_host : "'127.0.0.1'");
 
   rc = mysql_query(mysql, query);
   myquery(rc);
@@ -18752,13 +18752,13 @@ static void test_wl6587() {
 
   /* initialize the server user */
 
-  rc = mysql_query(mysql, "DROP USER IF EXISTS wl6587_cli@localhost");
+  rc = mysql_query(mysql, "DROP USER IF EXISTS wl6587_cli@127.0.0.1");
   myquery(rc);
 
   rc = mysql_query(mysql,
-                   "CREATE USER wl6587_cli@localhost IDENTIFIED BY 'wl6587'");
+                   "CREATE USER wl6587_cli@127.0.0.1 IDENTIFIED BY 'wl6587'");
   myquery(rc);
-  rc = mysql_query(mysql, "ALTER USER wl6587_cli@localhost PASSWORD EXPIRE");
+  rc = mysql_query(mysql, "ALTER USER wl6587_cli@127.0.0.1 PASSWORD EXPIRE");
   myquery(rc);
 
   /* prepare the connection */
@@ -18826,7 +18826,7 @@ static void test_wl6587() {
   mysql_close(l_mysql);
 
   /* cleanup */
-  rc = mysql_query(mysql, "DROP USER wl6587_cli@localhost");
+  rc = mysql_query(mysql, "DROP USER wl6587_cli@127.0.0.1");
   myquery(rc);
 }
 
@@ -20817,10 +20817,10 @@ static void test_bug32391415() {
   DIE_UNLESS(lmysql != nullptr);
   if (!opt_silent) fprintf(stdout, "Established a test connection\n");
 
-  rc = mysql_query(lmysql, "CREATE USER b32391415@localhost");
+  rc = mysql_query(lmysql, "CREATE USER b32391415@127.0.0.1");
   myquery2(lmysql, rc);
   rc =
-      mysql_query(lmysql, "GRANT ALL PRIVILEGES ON *.* TO b32391415@localhost");
+      mysql_query(lmysql, "GRANT ALL PRIVILEGES ON *.* TO b32391415@127.0.0.1");
   myquery2(lmysql, rc);
 
   if (!opt_silent) fprintf(stdout, "Created the user\n");
@@ -20852,7 +20852,7 @@ static void test_bug32391415() {
 
   mysql_close(lmysql);
 
-  rc = mysql_query(mysql, "DROP USER b32391415@localhost");
+  rc = mysql_query(mysql, "DROP USER b32391415@127.0.0.1");
   myquery2(mysql, rc);
 }
 
