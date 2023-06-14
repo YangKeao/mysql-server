@@ -282,7 +282,7 @@ static bool check_have_innodb(MYSQL *conn) {
   rc = mysql_query(
       conn,
       "SELECT (support = 'YES' or support = 'DEFAULT' or support = 'ENABLED') "
-      "AS `TRUE` FROM information_schema.engines WHERE engine = 'innodb'");
+      "AS `TRUE` FROM information_schema.engines WHERE engine = 'InnoDB'");
   myquery(rc);
   res = mysql_use_result(conn);
   DIE_UNLESS(res);
@@ -1223,9 +1223,9 @@ int main(int argc, char **argv) {
   for (i = 0; i < argc; i++) original_argv[i] = strdup(argv[i]);
 
   MEM_ROOT alloc{PSI_NOT_INSTRUMENTED, 512};
-  if (load_defaults("my", client_test_load_default_groups, &argc, &argv,
-                    &alloc))
-    return 1;
+//  if (load_defaults("my", client_test_load_default_groups, &argc, &argv,
+//                    &alloc))
+//    return 1;
 
   get_options(&argc, &argv);
 
